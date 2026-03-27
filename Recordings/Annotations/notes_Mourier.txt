@@ -1,0 +1,702 @@
+Amelioration du prototype
+L'algorithme doit etre en mesure d'appliquer lálgortihme en fonction des electrodes disponibles
+Detecter les suppressions en utilisant la moyenne des signaux ou le max
+
+(lissage des puissances alpha 1 min, moyenne et std
+recuperer les artefacts depuis le bis,
+echelle negative,
+echelle du spectro a modifier, renforcer le contraste, perception lineaire, mettre du rouge (rainbow a eviter))
+turbo (par google)
+augmenter lóverelap pour enlever les petits carrees ou interpolation
+changer code couleur de léchelle pour alpha et delta 
+stack area plot
+
+sevo intention alvaire artere cerveau
+propo intention plasma cerveau
+prendre root mean squre et faire le rapport (ou log scale)
+
+python tkinter (essentiel), gtk (drag and drop)
+
+
+Nouveau patient (23/2)
+Sufentanil 5 9h10
+Alpha fragmente mais delta constant -> surdosage
+sevo 1.1 -> 1 9h12
+Delta et alpha fragmente -> sous dosage
+superposition alpha et delta -> bon profil
+9h34 sonde gastrique
+sevo 1.1 9h36
+sufentanil 5 9h38
+presence de beta -> tolerable
+sevo 1.3 9h42
+9h50 frequence respiratoire 16 a 19 -> empecher la vasodilatation pour eviter 
+qu une grande quntite de sevo par unite de temps entre dans le cerveau
+9h59 sevo 1.2
+hypothermie -> moins absorption du sevo
+10h11 recrutement -> detendre les poumons pour empecher les alveoles de ..
+10h24 suf 5
+10h28 sevo 1.1 
+10h48 rocu 20
+11h16 suf 5, rocu 30
+11h20 sonde gastrique
+12h06 recrutement
+12h15 rocu 10
+12h18 exsuflation
+12h20 bridion (decurarise) 400
+presence de beta et gamma artefactuelle (courant electrique ?)
+12h22 sevo 1.3
+12h26 sevo 0.6
+12h29 sevo 0
+12h33 extubation
+
+Note: on observe des beta, peut etre reduire la bande de frequence de calcul
+
+Nouveau patient (9/3)
+8h50 sevo 1.5
+9h15 curare 20 mg, sevo 1.8
+9h25 incision
+9h20 sevo 2, suf 10
+9h47 rocu 20
+10h08 suf 5 (tension et frequence respiratoire ont augmente)
+10h10 sevo 2.2
+10h13 suf 5
+10h53 sevo 1.8
+patient decurarise donc on ne baisse pas la concentration sinon le reveil sera rapide
+11h01 rocu 10
+11h08 recrutement
+11h14 sevo 1
+11h18 sevo 0
+11h20 sevo 1
+11h23 sevo 0
+apres arret sevo, toujours alpha dans la fragmetation, baisser le threshold
+11h34 extubation
+
+Nouveau patient 2 (9/3)
+12h09 bolus propofol, ketamine, sufentanil, lodocaine
+12h11 intubation, capnie
+12h14 sevo 1
+12h15 ephredrine
+12h25 chauffage car medicament provoque de la vasodilation donc perte
+      facile de la temperature
+12h26 ephedrine
+12h32 sevo 1.9 car MAC 0.5 (pour a terme monter a 1)
+12h42 incision
+13h12 curare 30
+
+
+Patient 16/3
+9h19 sevo 1.6
+9h28 sevo 1.8
+9h31 incision
+rocu effect lasts for 1h30 to 2h depending on the patient
+9h47 suf 5
+VVP, Paw starts to have this 'dent de scie' effect, thus means decurarization 
+effect of suf to put the arterial blood presure back to normal
+10h28 curare 20
+11h51 sevo 1.5
+11h55 sevo 0
+11h58 sugammadex 300 mg, propo 50
+12h15 extubation
+presence de delta et alpha pdt phase emergence -> incoherent
+
+
+
+Patient 2 16/3
+12h35 entree
+12h50 suf 20
+12h51 lido 50
+12h52 prop ce 2.5
+12h53 prop ce real 2, target 4
+12h53 ce real 3, target 3.5
+12h53 loss cilliar reflex
+12h54 ce real 5
+12h54 rocu 50
+12h57 intubation 
+12h59 suf 5
+patient surdose car alpha fragmente
+13h10 propo 2
+hypotendu donc baisse concentration
+13h18 prop 3
+13h36 rocu 20
+13h39 incision
+
+
+Patient 1 30/3
+9h12 sevo 1.5-> 1.3, remi 2.5, trocard, insufflation
+9h19 sevo 1.1, remi 3
+Correction ground check (ne pas le considerer), trajectoire alpha pendant maintenance (monte->augmenter dose, descend-> decroitre dose)
+9h55 remi 3.5
+10h00 rocu 20
+10h05 descente sonde de calibration 
+10h10 remi 4
+seuil adaptatif -> calculer ratio beta + gamma pre anesthesie pour avoir une idee de l'amplitude
+10h36 remi 3
+Exporter EEG et BIS en meme temps, exporter les infos teleexpiratoires depuis le GE
+10h50 sevo 0.9, remi 2
+10h53 sevo 0.7
+10h54 remi 1
+corriger bandes puissances cumulees
+10h57 stop sevo et remi 
+11h02 extubation 
+apres avoir tout recuperer, montrer le bilan 
+
+Patient 2 30/3
+11h29 entree
+changer detection debut
+12h02 pre oxygenation
+12h08 suf 10
+12h09 xylo 40 
+12h10 propo 4
+12h13 rocu 50
+12h15 keta 30
+12h20 suppressions non identifiees
+12h21 propo 3.4
+12h26 propo 2.5 (burst suppression)
+12h33 incision, propo 4, suf 5
+12h36 propo 3.5
+12h40 propo 5
+12h43 suf 5
+tension 16/10
+12h49 propo 3.5
+12h57 nicardipine 0.5mg (anti hypertenseur)
+13h00 propo 2
+artifact frequence cardiaque
+courbe cumul suppressions
+13h09 propo 2.5
+13h12 propo 2
+13h14 nicardipine 0.5
+13h22 propo 1.8
+13h27 suf 5
+13h29 nicardipine 0.5
+13h38 arret
+
+
+Patient 13/4 (Sleeve)
+9h11 sevo cible 1.5
+9h12 sevo 1.8, incision, trocard
+9h13 insufflation
+modifier la state pour automatiquement detecter chaque phase
+duree cumulee fausse 
+SEF MF a augmente donc augmentation de la dose
+3 demi vie (~6 min) pour le cerveau de reagir
+alpha passe de 10 hz a 12 hz avant de se fragmenter
+ajouter front de frequence spectrale (SEF, MF)
+10h30 sevo 2
+10h50 sevo 1.8
+10h56 rocu 10
+enfants sevo -> passage de delta + alpha a delta seul -> au lieu de 1mg/kg, 0.5mg/kg pour bolus propofol 
+11h06 bridion 200
+11h09 sevo 1.4
+11h10 infiltration cicatrice
+11h13 sevo 0
+changement echelle pendant emergence (beta*8, gamma*8)
+3 onglets pour chaque phase pour donner le bilan
+discordances pendant emergence -> alpha sur prototype mais pas d'alpha sur BIS
+11h36 extubation
+
+Patient 2 13/4 (cholecystectomie)
+12h09 entree
+12h15 suf 15, lido 50 propofol 4
+12h16 keta 25 ce 2.2 ce 3
+12h17 ce 3.5, cible 5, rocu 40, cible 6 (qte totale 105 mg)
+12h19 intubation
+12h20 propo 4 (139 mg)
+triple bandes dues a la keta qui cree une bande de frequence haute, prend 15 min pour disparaitre (par defaut 0.5mg/kg -> 50% d'apparition
+12h33 propo 5, rocu 10
+12h36 propo 4
+12h40 propo 3.5
+12h41 incision
+12h46 insufflation, propo 3
+12h57 suf 5
+13h00 lidocaine 50
+13h04 propo 2.8
+gonflement ventre fait baisser le metabolisme -> le patient elimine moins et la sedation est plus profonde -> modele pk/pd fausse -> diminution de la concentration 
+13h15 exsufflation
+13h20 infiltration
+13h22 bridion
+13h23 propo 2.5 burst suppression cause inconnue ??
+13h24 propo 2
+13h30 propo 0 (728 mg)
+13h47 extubation
+enlever lampe CDA
+
+Patient 1 22/5 (sleeve)
+9h04 incision
+9h05 sevo 2 -> 2.7
+9h08 sevo 2.3
+9h31 sevo 2
+9h52 sevo 1
+9h55 sevo 0
+10h12 extubation
+
+Patient 2 (cure de hernie)
+10h50 arrivee
+10h55 preoxygenation
+10h56 lidocaine 50 (adjuvant attenuer nociception)
+10h57 suf 15
+10h58 bolus propo 150
+11h guedel, rocu 50, propo 50
+11h01 ketamine 30 (antihyperanalgesiant)
+11h02 dexamethasone 8 (corticoide anti nauseux)
+11h05 intubation
+11h06 sevo 3
+11h07 sevo 4
+11h08 suf 5
+11h09 sevo 3, propo 50
+11h13 sevo 2
+11h08 tapbloc
+11h36 sevo 2.5
+11h38 incision
+11h46 sevo 2
+mean and std for the band power instantaneous variation when concentration is stable
+12h57 sevo 1.6
+13h15 sugamadex 200
+13h16 sevo stops, recrutement 
+13:27 extubation (n'a pas ouvert les yeux, pression elevee)
+
+
+Patient 6/1 F, 76 ans
+11h01 lido 30
+11h02 suf 15
+11h03 etomidate 30, propo 50
+11h04 rocu 40, ketamine 20, dexa 8
+11h06 intubation
+11h11 sevo 1, nora 200 microgramme/h (fait augmenter la tension)
+11h15 sevo 0.7
+11h27 incision
+11h33 sevo 1.4 (tension elevee), stop nora
+11h52 suf 5
+13h07 stop sevo
+13h21 extubation
+
+Patient 1 6/8 81 ans
+9h20 sevo 1
+9h32 sevo 1.3
+9h38 sevo 1.5
+9h51 sevo 1.4 cut the stomach (insicion)
+9h58 sevo 1.2
+10h06 sevo 1
+10h26 suf 5
+10h37 rocu 20 curare
+10h42 square wave corrected
+11h07 (end) a high artifact
+11h08 a high artifact
+11h31 ketamine 10
+11h32 sevo 0.8
+11h37 a high artifact
+11h46 electronic scalpel
+11h54 rocu 10
+12h01 sevo 0.6
+12h16 sevo 0.8
+12h20 suf 5
+12h20 rocu 10
+12h53 suf 5 rocu 10
+1h03 rocu 20
+1h20 sugamadex 200
+1h26 sevo 1.2(for waking up)
+1h34 sevo 0.9
+1h39 a high artifact
+1h40 sevo stop
+1h46 spontaneous ventilation, extubation
+
+Patient 1 6/22
+9h53 sevo 1.8
+10h05 acupan (nefopam) antalgic for pain 20 mg
+10h09 sevo 1.6
+10h15 respiratory frequency from 13 to 14 (to increase the intake of sevo)
+10h24 sevo 0.9
+10h27 sevo 0
+10h32 extubation
+
+Patient 2 6/22
+11h18 entree
+11h19 bolus propofol 200, suf 15, curare 50 
+11h27 sevo 1.1
+11h30 keta 20 (ketamine inhibe une inhibition donc active les autres frequences, delta signe deactivation du cortex, alpha interruption thalamus et cortex
+11h45 sevo 1.8
+11h50 incision
+11h57 rocu 20
+12h12 sevo 1.6
+12h44 rocu 20, suf 5
+
+Patient 1 6/29
+9h05 bolus propofol: bolus=150mg
+9h08 intubation, sevo 2
+9h22 incision
+comments: chirugie stable
+10:11 sonde pour detecter l estomat a coupe.
+11:42 Recovery
+
+Patient 2 6/29   hernie: eventration parois abdo.
+12h21: prep patient
+12:23: mask oxygen.
+12:24 suffintanyl 15mg-douleur-
+12:25 lidocoin 50mg, ketamyne 20mg
+12:27 propofol 80mg-> click ''induction button''
+12:29: rocu 50mg
+12:29 Propofol 30 mg
+12:32 intubation
+12:35: 0.9 sevo cible (TCI)
+12:37 sevo 1.8
+-Anesthesie local de la parois abdominal.
+-bande alpha decaler vers le haut, le bis apparait fort vers 60, alors que la sedation semble normale.
+
+13:12 incision
+13:25 atropin 1mg increase cardiac frequency
+13h31: Rocu 20mg
+
+
+Patient 1 07/13   eventration
+14.14 prep patient (woman, around age 50, black, obese bmi 37)
+14.21 pre oxygenation
+14.23 lidocain 90 mg bolus
+14.28 sufantanil 15mg
+14.29 propofol 180mg -> click ''induction button''
+14.30 ketamin 20mg
+14.31 rocuronium 60mg
+14:34 intubation
+14.35 sevo 2% target
+14.36 prop 20mg bolus
+14.43 sufantanil 5mg
+14.45 cefazolion 2g
+15.17 sufantanil 5mg
+15:38 rocuronium 20mg
+16.07 sufantanil 5mg
+16.16 rocuronium 20mg
+16.23 rocuronium 20mg
+16.23 sufantanil 5mg
+16.55 sevo 1.6% target
+16.55 ephedrine 9mg
+17.05 sevo 1.8% target
+17.09 paracetamol 1g
+17.09 nefopam 20mg
+17.09 droperidol 1.25mg
+17.25 sevo 1% target
+17.30 sevo 0% 
+17.30 sugammadex 200mg
+17.41 extubation
+
+Patient 1 07/20 
+8.44 propofol 100mg
+8.44 propofol 100mg
+8.45 rocuronium 60mg
+8.45 mask ventilation loss of consciousness
+8.45 dexamenthasone 8mg
+8.48 intubation
+8.48 propofol 50mg
+8.49 end of intubation
+8.50 sevo 2%
+8.53 the second perfusion
+8.53 sevo 2.5%
+9.22 incision
+9.22 insufflation
+9.27 nefopam
+9.28 sevo 2.3%
+9.53 ketamin 10mg
+9.55 recruitment manoeuvre 
+9.58 sufentanil 10ug
+10.17 rocuronium 10mg
+10.20 put a tube into the stomach
+10.42 sevo 2%
+10.45 paracetamol 1g
+10.58 propofol 100mg
+10.58 sevo 2.2%
+11.08 sevo 2%
+11.11 bridion 200mg
+11.14 sevo 0
+11.24 extubation
+
+
+patient2 07/20
+11.54 connect device
+12.02 lidocaine 100mg
+12.03 sufentanil 0.3ng/ml
+12.05 propofol  8ug/ml(click induction)
+12.06 profofol  5ug/ml
+12.07 rocuronium 70mg
+12.10 intubation
+12.10 end intubation
+12.14 program crash(save data and restart)
+12.21 propofol 4ug/ml
+12.29 sufentanil 0.25ng/ml
+12.34 cut(artifact)
+12.52 sufentanil 0.3ng/ml
+1.13 stop sufentanil (click recovery---wrongly)
+1.22 stop lidocaine
+1.22 sufentanil 0.1
+1.23 paracetamol 1g
+1.23 nefopam 20
+1.23 dropendol 1.25
+1.56 sufentanil 0.2
+2.08 exacyl 1g
+2.24pm sufentanil stop(100ug total)
+2.57 propofol stop(click recovery, 1850mg)
+3.39 extubation
+
+
+
+patient 07/12 amygdalectomie
+sufentanil 10 mg
+propofol 400 mg
+recu 100 mg
+suxa 100 mg
+
+9.26
+9.45    sevo 2.25
+	inspi 1.82
+	expi 1.49
+9.48    sevo 3.5
+9.52    inspi 2.32
+	expi 1.89
+	sufentanil 5 mg
+	sevo 3 
+9.58	inspi 2.28
+	expi  1.89
+10.06   inspi 2.22
+	expi 1.8
+10.17   sevo 3
+	inspi 2.16
+	expi 1.74
+10.22   sevo 3
+	inspi 2.17
+	expi 1.74
+10.27   sevo 3
+	inspi 2.2
+	expi 1.83
+10.32   sevo 3
+	inspi 2.23
+	expi 1.34
+
+10.37   sevo 3
+	inspi 2.25
+	expi 1.91
+10.40   sevo 3
+	inspi 2.3
+	expi 1.91
+
+Patient 2 12/7
+
+10.59 lido 40mg propo 4
+11.00 Ce 2.9
+11.01 Ce 3.28, 3.6 (+30s)
+11.03 Ce 4
+11.04 propo 3.5
+11.05 propo 3
+11.08 propo 2
+11.15 stop propo 
+
+patient 3 12/07
+11.51  lido 40
+11.55 propo bolus 150 mg
+11.57 celokurine 50 mg
+11.57 alfentanil 750 microg
+11.59 intubation
+12.02 sevo 2.2 (inspi 2.9 expi 1.7)
+12.09 inspi 1.9 expi 1.7
+12.0rapi 0.5 mg
+12.26  sevo 2.1 inspi 2.4 exp 2.1
+12.37 sevo 2.2 inp 2.3 exp 2.1
+12.48 arret sevo
+12.58 extubation
+
+
+Louis Mourier 21/12/2023
+
+patient 1
+
+9:02 debut
+9:04  15mug sufyntanyl
+9:05   50 mg idocain [sans curare]
+9:06  induction 250 mg
+9:08 sevo 0.2 
+9:17 incision
+9:22 insp =2.29, exp=1.98 sevo 
+9.24 paracetamol, acupan, droperidol
+9:34 chirurgie: fini stop sevo
+10:00 extubation
+10:09 save data. reveil tres retarde, sabs doute du a un surdosage au debut.
+
+patient 2
+10:16 preparation sceptom cloison nasal
+10:19 schneider propofol cible
+10:25 xylocaine, propof 4  micro g, suffyntanyl 15
+10:25 propofol 6
+10:26 propofol 12
+10:27 propofol 15, s xetamine 7.5
+10:28 intubation
+10:29 propofol 15
+10:30 356 mg propofol
+      ce  propofol ce12.2
+10:31 propofol 8
+10:36 propofol 6 lidocaine 70mg
+10:41 il bougerocuronium 30 mg
+10:42 propofol 5
+11:18 propofol 3.7
+11:49 5 sufyntanil, rocu 20mg
+11:59 paracetamol, acumpan, drolepton
+12:11 arret propo
+12:16  ce 2.1
+12:19 ce 1.8
+12:23 ce 1.6
+12:24 arrive fragmentation des delta
+Bilan propol 1298 mg/ 1h59 
+12:30 ce 1.4
+12:31 extubation
+
+
+
+11/01/2024 Patient 1
+9h entree
+9h02 lido 50mg
+9h03 propo 200mg
+9h04 rocu 80mg, ketamine 10mg, dexa 8mg, intubation
+9h05 sufen 15ug
+9h13 sevo cible 1.5%
+9h21 sevo 2.2%
+9h23 ephredrine 12mg (vasoconstricteur)
+9h30 suf 5ug
+9h35 sevo 1.9%
+10h34 sevo 1.8 %
+10h40 sevo 1.7%
+11h02 sugamadex 200 mg
+11h02 sevo 0
+11h10 extubation
+
+
+Patient 2
+11h44 entree
+11h52 pre oxygenation
+11h57 sufentan 15
+11h58 lido 50mg, propo 100mg
+11h59 propo 50mg
+12h00 dexa 8mg, keta 10mg, rocu 40mg
+12h03 propo 50mg
+12h03 intubation
+12h04 sevo 1.3% cible (plus rapide que la cuve)
+12h05 sevo 1.8% (presence de haute frequence due au plsatique qui couvrait la tete du patient=> cree un champ electromag regulier qui perturbe l'eeg)
+12h26 incision
+12h27 sufentanil 5ug
+12:29 rocu 20 mg augmentation de la SPI surgical pleth idnex
+12:30 sufentanil 5 ug
+12:33 sevo 1.6 (alpha bas [8-10Hz] avant debut de fragmentation)
+12:49 end
+
+01/18/2024
+Patient 1
+9h00 entree
+8h50 induction
+8h50 propofol cible 3
+9h07 propofol 3.5
+9h10 propofol 3
+9h17 propofol 2.5
+9h24 propofol 2
+9h28 stop propofol
+9h33 legere conscience
+9h34 conscience
+
+patient 2
+9h44 entree
+9h53 propofol cible 5 {tension was quite high}
+9h55 propofol 6
+9h56 propofol 3.4
+9h58 propofol 3
+10h00 propofol 3.5
+10h03 propofol 4
+10h06 propofol 3
+10h19 propofol stops
+10h30 ephedrine: remonter la tension q=9 
+
+patient 3 intubation with fast sequence
+10h47 entree
+10h51 40 lidocaine {eyes opening}
+10h56 propofol 200
+10h56 rapifen 500 microg
+10h59 sevo 2
+11h00 sevo 3
+11h02 mac 0.6 then 0.7
+11h05 sevo 3.8 mac 0.7
+11h08 propofol 5 cible
+11h09 mac 1.1 sevo 4
+11h25 mac 1.2 sevo 3.5
+11h29 stop sevo
+
+patient 4 
+11h48 entree
+12h03 propofol 4
+12h08 propofol 5
+12h12 propofol 4
+12h21 propofol 4.5
+12h24 propofol 4.3
+12h34 propofol 4
+12h35 2 spasfon 1g daffalgan
+12h39 propofol 3.5
+12h46 propofol 3
+12h54 "manipulation of stomach and no response yet the BIS is high {70}, our algo indicates frag of alpha and delta showing a shallow anesth"
+13h00 end propofol stop
+
+
+Louis Mourier 01/25/2024
+patient 1
+9h58 propofol 6 then 5
+10h03 propofol 4.5
+10h06 propofol 4
+10h08 propofol 3.6
+10h20 spafon daffalgan
+10h26 propofol stops
+10h32 stimulation audio
+10h35 stimulation audio
+10h36 awakening
+
+patient 2
+11h05 lidocaine 30 mg
+11h05 propofol 3.5
+11h08 propofol 4 
+11h12 propofol 3
+11h18 passage fibro collo
+11h22 spasfon et daffalgan
+11h25 9 deffedrine
+11h29 propofol 2
+11h30 9 devedrine {vasoconstricteur}
+11h30 stops propofol
+11h36 awakening 
+
+patient 3
+11h44 entry
+12h08 induction start
+12h16 propofol 5 puis 6 puis 5
+12h22 propofol 5.5 100 gamma racufene
+12h25 propofol 5 dacupan et daffalgan
+12h29 propofol 4.5
+12h31 propofol 3.5
+12h32 propofol stops
+12h46 stimulation
+12h50 manipulation patient
+12h51 awakening
+
+Louis Mourier 01/02/2024
+patient 1
+8h59 our entry the patient is already asleep
+9h14 sevo 1.5 (was that before)
+9h28 crash
+9h30 paracetamol, nefopam, ketoprofene, droperidol
+9h34 5 mg suffentanil 10 mg rocuronium
+9h51 6mg effedrine 
+9h54 1.4 sevo
+10h01 1.2 sevo 
+10h10 1.4 sevo
+bis 36-42 throughout surgery
+10h28 10 mg rocuronium
+11h05 suffentanil 5 mg
+11h05 rocuronium 10 mg
+11h10  1.7 sevo
+11h34 1.2 sevo
+11h39 stop sevo
+11h48 extubation
+
+patient 2
+12h26 patient is awake
+13h21 2.6 propofol was 3
+13h31 2.2 propofol
+13h51 2.6 propofol
+13h54 3 propofol (very close change in time)
+2h51 1 propofol
