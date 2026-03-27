@@ -1,0 +1,364 @@
+from PyQt6.QtCore import *
+from PyQt6.QtGui import *
+from PyQt6.QtWidgets import *
+from Functions.detect_ground_check import clean_ground_check
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+import matplotlib.pyplot as plt
+import scipy as sc
+import numpy as np
+from visualization_window.alpha_PSD import PsdPage
+from visualization_window.spindles_proportion import SpindlesProportionPage
+from visualization_window.OU_fit import OUFitPage
+from visualization_window.sliding_spindles_proportion import SlidingSpindlesProportionPage
+from visualization_window.sliding_spindles import SlidingSpindlesPage
+from visualization_window.sliding_f_quantiles import SlidingfQuantilesPage
+from visualization_window.store_page import StorePage
+from visualization_window.spindle_f_distribution import SpindlesFreqDistPage
+from visualization_window.sliding_power import SlidingPowerPage
+from visualization_window.sliding_power_ratio import SlidingPowerRatioPage
+from visualization_window.sliding_be import SlidingBEPage
+from visualization_window.psd_freq_fit import PSDFreqFitPage
+from visualization_window.sliding_fragmentation import SlidingFragmentationPage
+import json
+from pathlib import Path
+from pyedflib import highlevel
+from Functions.detect_artifacts import find_artifacts
+from Functions.WaveletQuantileNormalization import WQN_3
+
+class MainWindow(QMainWindow):
+
+    def __init__(self):
+        super().__init__()
+
+        self.resize(1500,800)
+
+        self.setWindowTitle("alpha wave tool [0.1]")
+
+
+    #--- main widget to store the others
+        central_widget=QWidget(self)
+        central_layout=QVBoxLayout()
+        central_widget.setLayout(central_layout)
+        self.setCentralWidget(central_widget)
+
+    #--- top widget
+        top_widget=QWidget()
+        top_widget.setMinimumHeight(50)
+        top_widget.setMaximumHeight(50)
+        top_layout=QHBoxLayout()
+        top_widget.setLayout(top_layout)
+
+        # open file button
+        open_file_btn=QPushButton('open file')
+        top_layout.addWidget(open_file_btn)
+
+        # sliders for left and right times selection
+        self.left_slider=QSlider(Qt.Orientation.Horizontal)
+        self.left_slider.setMinimumWidth(500)
+        self.left_slider.setMaximumWidth(500)
+        self.right_slider=QSlider(Qt.Orientation.Horizontal)
+        self.right_slider.setMinimumWidth(500)
+        self.right_slider.setMaximumWidth(500)
+        top_layout.addWidget(self.left_slider)
+        top_layout.addWidget(self.right_slider)
+
+        # labels to show the value of the slider
+        self.left_value=QLabel()
+        self.right_value=QLabel()
+        top_layout.addWidget(self.left_value)
+        top_layout.addWidget(self.right_value)
+
+        # button to store data 
+        btn_layout=QHBoxLayout()
+        edit_store_btn=QPushButton('edit store data')
+        store_btn=QPushButton('store data')
+        btn_layout.addWidget(edit_store_btn)
+        btn_layout.addWidget(store_btn)
+        top_layout.addLayout(btn_layout)
+
+        # add top_layout to central one
+        central_layout.addWidget(top_widget)
+
+    #--- middle widget (Spectrogram plot)
+        middle_widget=QWidget()
+        middle_widget.setMinimumHeight(275)
+        middle_widget.setMaximumHeight(275)
+        middle_layout=QVBoxLayout()
+        middle_widget.setLayout(middle_layout)
+
+        self.fig0,self.axis0=plt.subplots(1)
+        self.fig0.tight_layout(pad=2)
+        self.fig0.set_figwidth(12)
+        self.fig0.set_figheight(2)
+        self.canvas0 = FigureCanvas(self.fig0)
+        toolbar0 = NavigationToolbar(self.canvas0)
+
+        middle_layout.addWidget(toolbar0)
+        middle_layout.addWidget(self.canvas0)
+
+        # create axis for plot of interval of measure
+        self.fig1,self.axis1=plt.subplots(1)
+        self.fig1.tight_layout(pad=2)
+        self.fig1.set_figwidth(12)
+        self.fig1.set_figheight(0.2)
+        self.axis1.set_xticks([])
+        self.axis1.set_yticks([])
+        self.canvas1 = FigureCanvas(self.fig1)
+
+        middle_layout.addWidget(self.canvas1)
+
+        central_layout.addWidget(middle_widget)
+
+    #--- bottom layout 
+        self.tab_widget=QTabWidget()
+        self.tab_widget.currentChanged.connect(self.update)
+
+        self.psd_page=PsdPage()
+        self.tab_widget.addTab(self.psd_page,'alpha PSD')
+
+        self.spindles_proportion_page=SpindlesProportionPage()
+        self.tab_widget.addTab(self.spindles_proportion_page,'Spindles Proportion')
+
+        self.OU_fit_page=OUFitPage()
+        self.tab_widget.addTab(self.OU_fit_page,'OU fit')
+
+        self.spindle_f_dist_page=SpindlesFreqDistPage()
+        self.tab_widget.addTab(self.spindle_f_dist_page,'Spindles f dist')
+
+        self.sliding_spindles_proportion_page=SlidingSpindlesProportionPage()
+        self.tab_widget.addTab(self.sliding_spindles_proportion_page,'Sliding Spindles Proportion')
+
+        self.sliding_spindles_page=SlidingSpindlesPage()
+        self.tab_widget.addTab(self.sliding_spindles_page,'Sliding Spindles')
+
+        self.sliding_f_quantiles_page=SlidingfQuantilesPage()
+        self.tab_widget.addTab(self.sliding_f_quantiles_page,'Sliding frequency quantiles')
+
+        self.sliding_power_page=SlidingPowerPage()
+        self.tab_widget.addTab(self.sliding_power_page,'Sliding Power')
+
+        self.sliding_power_ratio_page = SlidingPowerRatioPage()
+        self.tab_widget.addTab(self.sliding_power_ratio_page,'Sliding Power Ratio')
+
+        self.sliding_be_page=SlidingBEPage()
+        self.tab_widget.addTab(self.sliding_be_page,'Sliding Block Entropy')
+
+        self.psd_freq_fit_page=PSDFreqFitPage()
+        self.tab_widget.addTab(self.psd_freq_fit_page,'PSD frequencies fit')
+
+        self.sliding_fragmentation_page=SlidingFragmentationPage()
+        self.tab_widget.addTab(self.sliding_fragmentation_page,'Fragmentation')
+
+        central_layout.addWidget(self.tab_widget)
+
+    #--- signals
+        open_file_btn.clicked.connect(self.get_file)
+        store_btn.clicked.connect(self.store_data)
+        edit_store_btn.clicked.connect(self.show_store_page)
+
+    #--- Storing of the functions to update depending on the selected page
+        self.D={}
+        self.D_get_record={}
+        # local visualization
+        self.D['0']=self.psd_page.update
+        self.D['1']=self.spindles_proportion_page.update
+        self.D['2']=self.OU_fit_page.update
+        self.D['3']=self.spindle_f_dist_page.update
+        # global visualization
+        self.D['4'], self.D_get_record['4'] = self.sliding_spindles_proportion_page.update, self.sliding_spindles_proportion_page.get_record
+        self.D['5'], self.D_get_record['5'] = self.sliding_spindles_page.update, self.sliding_spindles_page.get_record
+        self.D['6'], self.D_get_record['6'] = self.sliding_f_quantiles_page.update, self.sliding_f_quantiles_page.get_record
+        self.D['7'], self.D_get_record['7'] = self.sliding_power_page.update, self.sliding_power_page.get_record
+        self.D['8'], self.D_get_record['8'] = self.sliding_power_ratio_page.update, self.sliding_power_ratio_page.get_record
+        self.D['9'], self.D_get_record['9'] = self.sliding_be_page.update, self.sliding_be_page.get_record
+        self.D['10'], self.D_get_record['10'] = self.psd_freq_fit_page.update, self.psd_freq_fit_page.get_record
+        self.D['11'], self.D_get_record['11'] = self.sliding_fragmentation_page.update, self.sliding_fragmentation_page.get_record
+
+    #--- create the store window
+        self.store_page=StorePage()
+
+    def get_file(self):
+        '''
+        Method to get a Mat file to open
+        '''
+        # search for file in storage
+        file=QFileDialog.getOpenFileName()
+        self.name=file[0][-23:-4]
+        print(file[0][-3:])
+
+        '''
+        data=sc.io.loadmat(file[0])
+            # get time and EEG recordings
+            #self.y=data['record'][:,0]
+            #self.fs=128
+        self.y=data['record'][0,:]
+        self.fs=63.01526406    
+        list_detection=[int(2*self.fs),int(1*self.fs),[0.004,0.04],"sym4",4,"periodization"]    
+        index_mask=find_artifacts(self.y,*list_detection) 
+        list_WQN=["sym4","periodization",30,1]
+        self.y=WQN_3(self.y,index_mask,*list_WQN) 
+
+        self.N_y=len(self.y)
+        self.t=np.linspace(0,self.N_y/self.fs,self.N_y)
+        self.delta_t=self.t[1]-self.t[0]
+
+        self.plot_spectrogram()
+        self.initialize_slider()
+        self.initialize_get_record()
+        self.initialize_store_data()
+        '''
+        data=sc.io.loadmat(file[0])
+            # get time and EEG recordings
+        self.y=data['record'][:,0]
+        self.fs=128
+            #self.y=data['record'][0,:]
+            #self.fs=63.01526406
+
+        # clean ground check
+        self.y=clean_ground_check(self.y,self.fs,16,7.5,8.5,50000)
+           
+        # parameters
+        list_detection=[2*self.fs,1*self.fs,[0.004,0.04],"sym4",4,"periodization"]  # [0.004,0.05] # [0.0004,0.002]
+
+        # pos of artefacts
+        index_mask=find_artifacts(self.y,*list_detection) 
+
+        #--- clean artefacts
+
+        # parameters
+        list_WQN=["sym4","periodization",30,1]
+
+        # clean artefacts
+        self.y=WQN_3(self.y,index_mask,*list_WQN)  
+                
+        self.N_y=len(self.y)
+        self.t=np.linspace(0,self.N_y/self.fs,self.N_y)
+        self.delta_t=self.t[1]-self.t[0]
+
+        self.plot_spectrogram()
+        self.initialize_slider()
+        self.initialize_get_record()
+        self.initialize_store_data()
+
+        '''
+        try:
+            data=sc.io.loadmat(file[0])
+            # get time and EEG recordings
+            self.y=data['record'][:,0]
+            self.fs=128
+            #self.y=data['record'][0,:]
+            #self.fs=63.01526406
+
+            # clean ground check
+            self.y=clean_ground_check(self.y,self.fs,16,7.5,8.5,50000)
+
+                        
+            # parameters
+            list_detection=[2*self.fs,1*self.fs,[0.004,0.04],"sym4",4,"periodization"]  # [0.004,0.05] # [0.0004,0.002]
+
+            # pos of artefacts
+            index_mask=find_artifacts(self.y,*list_detection) 
+
+            #--- clean artefacts
+
+            # parameters
+            list_WQN=["sym4","periodization",30,1]
+
+            # clean artefacts
+            self.y=WQN_3(self.y,index_mask,*list_WQN)  
+                
+            self.N_y=len(self.y)
+            self.t=np.linspace(0,self.N_y/self.fs,self.N_y)
+            self.delta_t=self.t[1]-self.t[0]
+
+            self.plot_spectrogram()
+            self.initialize_slider()
+            self.initialize_get_record()
+            self.initialize_store_data()
+    
+
+        except FileNotFoundError:
+            print('file not found')
+
+        except:
+            signals, signal_headers, header = highlevel.read_edf(file[0])
+            self.y=signals[0]
+            self.fs=178.15384615384616
+
+            self.y=clean_ground_check(self.y,self.fs,16,7.5,8.5,50000)
+            self.N_y=len(self.y)
+            self.t=np.linspace(0,self.N_y/self.fs,self.N_y)
+            self.delta_t=self.t[1]-self.t[0]
+
+            self.plot_spectrogram()
+            self.initialize_slider()
+            self.initialize_store_data()
+
+        finally:
+            file=open(file[0],'r')
+            lines = file.readlines()
+            N=len(lines)
+            y=[]
+            for i in range(N):
+                y.append(float(lines[i]))
+            self.y=np.array(y)
+            self.fs = 128
+
+            self.y=clean_ground_check(self.y,self.fs,16,7.5,8.5,50000)
+            self.N_y=len(self.y)
+            self.t=np.linspace(0,self.N_y/self.fs,self.N_y)
+            self.delta_t=self.t[1]-self.t[0]
+
+            self.plot_spectrogram()
+            self.initialize_slider()
+            self.initialize_store_data()
+        '''
+            
+    def initialize_slider(self):
+
+        self.left_slider.setMinimum(0)
+        self.left_slider.setMaximum(self.N_y-512)
+        self.right_slider.setMinimum(512) # 4 s
+        self.right_slider.setMaximum(128*10*6*10) # 10 min 
+
+        self.left_slider.setValue(0)
+        self.right_slider.setValue(1280*3) # 30 s
+
+        self.left_slider.valueChanged.connect(self.update)
+        self.right_slider.valueChanged.connect(self.update)
+
+    def initialize_get_record(self):
+
+        for i in range(4,12):
+            self.D_get_record[str(i)](self.y,self.t,self.fs)
+
+    def plot_spectrogram(self):
+
+        self.axis0.cla()
+
+        # compute spectrogram
+        delta_f=0.5
+        delta_t=2
+        nfft=int(self.fs/delta_f)
+        overlap=int(nfft-delta_t*self.fs)
+        overlap=nfft-32
+        f_spectro,t_spectro,spectro=sc.signal.spectrogram(self.y,self.fs,nperseg=nfft,noverlap=overlap)
+        delta_f=f_spectro[1]-f_spectro[0]
+
+        self.axis0.pcolormesh(t_spectro,f_spectro[int(1/delta_f):int(50/delta_f)],np.log(spectro[int(1/delta_f):int(50/delta_f),:]+0.000001),shading='nearest',cmap='rainbow',vmin=np.log(1.e-2),vmax=np.log(10))#,vmin=1.e-10,vmax=10)
+        self.canvas0.draw()
+
+    def update(self):
+
+        try:
+            # for local analysis
+            if self.tab_widget.currentIndex() <= 3:
+            #--- update sliders labels
+                self.left_value.setText("t0: " + str(round(self.left_slider.value()*self.delta_t,2)))
+                self.right_value.setText("delta_t: " + str(round(self.right_slider.value()*self.delta_t,2)))
+
+            #--- show position of the current selected eeg part
+                self.axis1.cla()
+                self.axis1.set_xlim(self.t[0],self.t[-1])
+        
